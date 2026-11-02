@@ -106,6 +106,10 @@ La persistance des critères de recherche, de filtre et de tri n'est pas demand�
     contrôles reviennent à leur état initial et tous les produits réapparaissent,
     sans annuler les achats ni les suppressions.
 
+## 🔗 Liens du projet
+
+- **Live Demo :** [Voir l'application](https://hiba-zakif.github.io/mes2-brief2-sprint2/)
+
 ## Repères
 
 | Élément | Identifiant |
