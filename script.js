@@ -123,11 +123,35 @@ function modifierStatut(id) {
   // TODO : changer uniquement le statut du bon produit dans les deux sens.
   // Le nom, le prix et l'id ne changent pas.
   // Mettre à jour la sauvegarde et l'affichage selon les critères actifs.
+
+  let index_p ;
+  produits.forEach((e , index)=>{
+    if(e.id == id){
+      index_p = index
+    }
+  })
+  const acheter = produits[index_p].statut == "Acheté";
+  produits[index_p].statut = acheter ? "À acheter" : "Acheté" ;
+  document.querySelector(".button-status").textContent = acheter ? "À acheter" : "Acheté" ;
+  actualiserAffichage();
+  console.log(produits[index_p]);
+  
 }
 
 function supprimerProduit(id) {
   // TODO : demander confirmation et retirer uniquement le bon produit.
   // Mettre à jour la sauvegarde et l'affichage si la suppression est confirmée.
+  const confirmation = confirm("etes vous sure de supprimer ce produits");
+  if(!confirmation){
+    return
+  }
+  const index = produits.findIndex(e=>e.id == id);
+  if(index == -1){
+    return
+  }
+    produits.splice(index , 1);
+    actualiserAffichage();
+
 }
 
 function appliquerCriteres() {
@@ -136,23 +160,100 @@ function appliquerCriteres() {
   // Modes : initial, croissant et decroissant.
   // Retourner les résultats sans modifier le tableau complet produits.
   // Le retour ci-dessous affiche provisoirement toute la liste.
-  return produits;
+  let tab_trier = [...produits];
+  
+
+  if(champRecherche.value.trim().length > 0){
+    tab_trier = produits.filter(e=>e.nom == champRecherche.value);   
+  }
+
+  if(filtreStatut.value.trim() != "tous"){
+    tab_trier = produits.filter(e=>e.statut == filtreStatut.value);   
+  }
+
+  if(triPrix.value == "croissant")  {
+      for(let i = 0 ; i < tab_trier.length ; i++){
+        let temp;
+        for(let j = 0 ; j < tab_trier.length ; j++){
+
+          if(tab_trier[i].prix < tab_trier[j].prix ){
+            temp = tab_trier[i];
+            tab_trier[i] = tab_trier[j];
+            tab_trier[j] = temp;
+            
+          }
+
+        }
+      }
+  }
+
+  if(triPrix.value == "decroissant")  {
+      for(let i = 0 ; i < tab_trier.length ; i++){
+        let temp;
+        for(let j = 0 ; j < tab_trier.length ; j++){
+
+          if(tab_trier[i].prix > tab_trier[j].prix){
+            temp = tab_trier[i];
+            tab_trier[i] = tab_trier[j];
+            tab_trier[j] = temp;
+          }
+
+        }
+      }
+  }
+
+  if(triPrix.value == "initial")  {
+      for(let i = 0 ; i < tab_trier.length ; i++){
+        let temp;
+        for(let j = 0 ; j < tab_trier.length ; j++){
+
+          if(tab_trier[i].id > tab_trier[j].id){
+            temp = tab_trier[i];
+            tab_trier[i] = tab_trier[j];
+            tab_trier[j] = temp;
+          }
+
+        }
+      }
+  }
+
+
+  
+  
+  if(tab_trier.length > 0){
+    return tab_trier;
+  }
+  // if(tab_trier.length == produits.length){
+  //   return produits ;
+  // }
 }
 
 function reinitialiserCriteres() {
   // TODO : vider la recherche, sélectionner tous les produits et l'ordre initial.
   // Actualiser l'affichage, sans modifier les produits ni leur sauvegarde.
+  champRecherche.value = "";
+  filtreStatut.value = "tous";
+  triPrix.value = "initial";
+  actualiserAffichage();
+
 }
 
 function sauvegarderProduits() {
   // TODO : sauvegarder le tableau complet produits dans localStorage.
   // Cette fonction est déjà appelée après un ajout.
+
+  localStorage.setItem("produits" , JSON.stringify(produits));
 }
 
 function chargerProduits() {
   // TODO : récupérer la sauvegarde dans produits si elle existe.
   // En l'absence de sauvegarde, conserver les données initiales.
   // Une sauvegarde contenant [] doit rester une liste vide.
+  if(!localStorage.getItem("produits")){
+    localStorage.setItem("produits" , JSON.stringify(produitsInitiaux));
+  }else{
+    // produits = localStorage.getItem("produits")
+  }
 }
 
 // Connexions fournies : compléter les fonctions appelées, sans les dupliquer.
